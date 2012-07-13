@@ -71,7 +71,7 @@ class OccitechCakeTestCase extends CakeTestCase {
 	protected function _searchResults(Model $Model, $criteria, &$conditions = array()) {
 		$conditions = $Model->parseCriteria($criteria);
 		$results = $Model->find('all', compact('conditions'));
-		return Set::extract('/' . $Model->alias . '/id', $results);
+		return Hash::extract($results, '{n}.' . $Model->alias . '.id');
 	}
 
 /**
