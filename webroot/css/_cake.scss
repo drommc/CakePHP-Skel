@@ -1,0 +1,149 @@
+/**
+ * CakePHP generic stylesheet to make default markup as compatible as possible
+ * with Twitter bootstrap
+ *
+ * Depends on https://github.com/jlong/sass-twitter-bootstrap
+ */
+
+// Variables
+$footer-height: 25px !default;
+$cakeActionsColumns: 3 !default;
+$cakeMainColumns: $gridColumns - $cakeActionsColumns !default;
+
+// Layout
+body {
+	padding-top: 50px;
+	padding-bottom: 25px;
+}
+
+div.form,
+div.index,
+div.view {
+	@include makeColumn($cakeMainColumns);
+	margin-left: $gridGutterWidth - 2 * 1px; // Borders of the .actions (.well)
+	float:right;
+}
+div.actions {
+	@include makeColumn($cakeActionsColumns);
+	@extend .well;
+
+	-webkit-border-top-left-radius: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	-moz-border-radius-topleft: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+
+	margin: $baseLineHeight 0;
+	padding: 5px 0;
+	h3 {
+		color: $grayLight;
+		font-size: 1.1em;
+		text-shadow: 0 1px 0 rgba(255,255,255,.5);
+		text-transform: uppercase;
+		padding: 3px 15px;
+	}
+	ul {
+		@extend .nav;
+		@extend .nav-list;
+	}
+}
+
+footer {
+	@extend .navbar;
+	height: $footer-height;
+	line-height: $footer-height;
+	text-align: center;
+}
+
+// Tables
+table {
+	@extend .table;
+	@extend .table-striped;
+	@extend .table-bordered;
+}
+th a.asc:after {
+	content: ' ⇣'; // TODO replace with icon
+}
+th a.desc:after {
+	content: ' ⇡'; // TODO replace with icon
+}
+tr .actions {
+	text-align: center;
+}
+table td.actions a {
+	@extend .btn;
+	@extend .btn-mini;
+	margin-right: 2px;
+	&:hover {
+		text-decoration: none;
+	}
+	&.delete {
+		@extend .btn-danger;
+	}
+}
+
+// Forms
+form {
+	@extend .form-horizontal;
+	label {
+		@extend .control-label;
+	}
+	.error-message {
+		@extend .help-inline;
+	}
+	.submit {
+		@extend .form-actions;
+		padding-top: 7px;
+		padding-bottom: 8px;
+	}
+	.input-append .add-on {
+		float: left; //Avoid possibility to error to be between input and add-on
+	}
+	input[type=submit] {
+		@extend .btn;
+		@extend .btn-success;
+	}
+}
+
+// Flash Messages
+.message {
+	@extend .alert;
+	@extend .alert-block;
+	@extend .alert-info;
+}
+.cake-debug {
+	@extend .message;
+}
+.success {
+	@extend .message;
+	@extend .alert-success;
+}
+.cake-error, p.error {
+	@extend .message;
+	@extend .alert-error;
+}
+.notice {
+	@extend .message;
+	@extend .alert;
+}
+
+// Pagination
+.pager {
+	li a {
+		background-color: $grayLighter;
+	}
+	li a, .current {
+		@include border-radius(5px);
+		padding: 2px 8px;
+	}
+	.previous a, .next a {
+		padding: 2px 15px;
+	}
+	.disabled {
+		display: none;
+	}
+	.current {
+		font-weight: bold;
+	}
+}

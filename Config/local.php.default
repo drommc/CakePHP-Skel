@@ -1,0 +1,15 @@
+<?php
+/**
+ * This file is an example of the needed configuration.
+ * You must duplicate and rename it to "local.php"
+ *
+ */
+/**
+ * Configuration specific to each deployed application with domain / server specific configuration
+ * This configuration is loaded in the application bootstrap
+ *
+ * @var array
+ */
+$config = array('MyApp' => array(
+	// 'Foo' => 'Bar', // TODO Add your deployment specific configurations here (paths, emails ...)
+));

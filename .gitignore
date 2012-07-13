@@ -1,0 +1,4 @@
+Config/database.php
+Config/local.php
+Config/email.php
+tmp/*
