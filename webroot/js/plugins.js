@@ -111,3 +111,36 @@ window.log = function f(){ log.history = log.history || []; log.history.push(arg
 		});
 	}
 }(window.jQuery);
+
+
+// Plugin for making dropdown dependent of other ones with static values
+// Usage: $(selector).dependable(relatedSelector) or using the "data-dependable=relatedSelector" HTML5 attribute
+// 		  Each option will then be displayed if their "data-depends" attribute value matches the
+// 		  value of the related dropdown
+!function($) {
+	$.fn.dependable = function(relatedSelector) {
+		var $related = $(relatedSelector);
+
+		return this.each(function() {
+			var self = $(this),
+				initialOptions = self.html();
+
+			$related.on('change', function() {
+				var selectedRegionId = $(this).val();
+
+				self.html(initialOptions);
+				if (selectedRegionId) {
+					self.find('option[value!=""]:not([data-depends=' + selectedRegionId + '])')
+						.remove();
+				}
+			}).trigger('change');
+		});
+	}
+
+	$(function () {
+		$('select[data-dependable]').each(function() {
+			var self = $(this);
+			self.dependable(self.data('dependable'));
+		});
+	});
+}(window.jQuery);
