@@ -88,6 +88,83 @@ class OccitechCakeTestCase extends CakeTestCase {
 		$this->assertEqual($results, $expected);
 	}
 
+/**
+ * Expects that an event is dispatched once with the correct params passed
+ * The event propagation will be stopped by default (see $stopEvent param)
+ *
+ * @param string $eventName			Name of the expected event
+ * @param Object $expectedSubject	PHPUnit constraint for the event subject (like used for a with)
+ * @param Object $expectedParams	PHPUnit constraint for the additional params
+ * @param boolean $stopEvent		Set to false to keep event propagation
+ * @param Object $nbCalls			Number of expected calls, optional [default: $this->once()]
+ * @param Object $eventManager		Event manager waiting the event
+ * @return callable					Attached callback so you can detach it afterwards
+ *									$callback = $this->expectDispatchedEvent([...]);
+ *									[ trigger the event ]
+ *									CakeEventManager::instance()->detach($callback);
+ */
+	public function expectEventDispatched($eventName, $expectedSubject = null, $expectedParams = null, $stopEvent = true, $nbCalls = null, $eventManager = null) {
+		if (is_null($expectedSubject)) {
+			$expectedSubject = $this->anything();
+		}
+		if (is_null($expectedParams)) {
+			$expectedParams = $this->anything();
+		}
+		if (is_null($nbCalls)) {
+			$nbCalls = $this->once();
+		}
+		if (is_null($eventManager)) {
+			$eventManager = CakeEventManager::instance();
+		}
+
+		$Listener = $this->getMock('StdObject', array('callbackMethod'));
+		$callback = function($event) use ($Listener, $stopEvent) {
+			$Listener->callbackMethod($event->subject(), $event->data);
+			if ($stopEvent) {
+				$event->stopPropagation();
+			}
+		};
+
+		$eventManager->attach($callback, $eventName, array('priority' => 1));
+		if ($eventManager !== CakeEventManager::instance()) {
+			$this->detachEvent($eventName);
+		}
+
+		$Listener->expects($nbCalls)->method('callbackMethod')
+			->with($expectedSubject, $expectedParams);
+
+		return $callback;
+	}
+
+	public function detachEvent($eventName) {
+		CakeEventManager::instance()->detach(null, $eventName);
+		foreach(CakeEventManager::instance()->listeners($eventName) as $listner) {
+			CakeEventManager::instance()->detach($listner['callable'], $eventName);
+		}
+	}
+
+/**
+ * Expects that an event is never dispatched
+ * The event propagation will be stopped by default (see $stopEvent param)
+ *
+ * @param string $eventName       Name of the expected event
+ * @param boolean $stopEvent 	  Set to false to keep event propagation
+ * @return callable                Attached callback so you can detach it afterwards
+ */
+	public function expectEventNotDispatched($eventName, $stopEvent = true) {
+		$Listener = $this->getMock('StdObject', array('callbackMethod'));
+		$callback = function($event) use ($Listener, $stopEvent) {
+			$Listener->callbackMethod();
+			if ($stopEvent) {
+				$event->stopPropagation();
+			}
+		};
+		CakeEventManager::instance()->attach($callback, $eventName, array('priority' => 1));
+
+		$Listener->expects($this->never())->method('callbackMethod');
+		return $callback;
+	}
+
 //Function avoiding error when using in a group
 	public function test() {
 
