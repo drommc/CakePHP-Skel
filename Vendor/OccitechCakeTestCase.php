@@ -10,6 +10,18 @@ class OccitechCakeTestCase extends CakeTestCase {
  * @var array
  */
 	protected $_record = array();
+	
+/**
+ * Events to "prevent" before each test (by unbinding all listeners)
+ *
+ * @var array
+ */
+	protected $_triggeredEventsToPrevent = array();
+
+	public function setUp() {
+		parent::setUp();
+		array_map(array($this, 'detachEvent'), $this->_triggeredEventsToPrevent);
+	}
 
 /**
  * Asserts that data are valid given Model validation rules
